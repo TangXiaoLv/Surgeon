@@ -1,0 +1,5 @@
+include ':simple'
+include ':surgeon-annotations'
+include ':surgeon-plugin'
+include ':surgeon-compile'
+include ':surgeon-core'
