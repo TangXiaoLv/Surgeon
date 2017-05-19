@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.tangxiaolv.surgeon.MyLinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/activity_main"
@@ -13,20 +13,31 @@
         tools:context="com.tangxiaolv.surgeon.MainActivity">
 
     <Button
-            android:layout_width="wrap_content"
+            android:id="@+id/btn"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:onClick="oneClick"
-            android:text="one"/>
+            android:textSize="16sp"
+            android:text="@string/tag"/>
 
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:onClick="twoClick"
+            android:tag="aaa"
             android:text="two"/>
 
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:onClick="threeClick"
             android:text="three"/>
-</LinearLayout>
+
+    <TextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+</com.tangxiaolv.surgeon.MyLinearLayout>

@@ -1,0 +1,12 @@
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+            pom.groupId = project.property('GROUP_ID')
+            pom.artifactId = project.property('ARTIFACT_ID')
+            pom.version = project.property('PUBLIC_VERSION')
+        }
+    }
+}

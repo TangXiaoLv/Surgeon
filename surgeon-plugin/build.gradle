@@ -1,5 +1,4 @@
 apply plugin: 'groovy'
-apply from: 'push.gradle'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -12,3 +11,6 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+//apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')
+apply from: 'localpush.gradle'

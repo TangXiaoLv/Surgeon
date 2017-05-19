@@ -27,8 +27,7 @@ class SurgeonPlugin implements Plugin<Project> {
 
     project.dependencies {
       compile 'org.aspectj:aspectjrt:1.8.10'
-//      compile 'com.tangxiaolv.surgeon:surgeon-core:0.0.1'
-//      compile 'com.tangxiaolv.surgeon:surgeon-annotations:0.0.2'
+      compile 'com.tangxiaolv.surgeon:surgeon-core:0.0.5'
     }
 
     project.extensions.create('surgeon', SurgeonExtension)
@@ -43,7 +42,7 @@ class SurgeonPlugin implements Plugin<Project> {
       javaCompile.doLast {
         String[] args = [
             "-showWeaveInfo",
-            "-1.5",
+            "-1.7",
             "-inpath", javaCompile.destinationDir.toString(),
             "-aspectpath", javaCompile.classpath.asPath,
             "-d", javaCompile.destinationDir.toString(),

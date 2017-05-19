@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply from: 'push.gradle'
 
 android {
     compileSdkVersion 25
@@ -19,3 +18,6 @@ android {
 
 dependencies {
 }
+
+//apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')
+//apply from: 'localpush.gradle'

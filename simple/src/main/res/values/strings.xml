@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Scalpel</string>
+    <string name="app_name">Surgeon</string>
+    <string name="tag">simple</string>
 </resources>

@@ -9,8 +9,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-//        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:0.0.8'
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:0.0.13'
+
+        //jcenter push plugin
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+
     }
 }
 
@@ -19,6 +24,7 @@ allprojects {
         maven {
             url uri('../repo')
         }
+        mavenCentral()
         jcenter()
     }
 }

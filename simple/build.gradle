@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "com.tangxiaolv.scalpel"
+        applicationId "com.tangxiaolv.surgeon"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
@@ -28,7 +28,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 
-//    compile 'com.tangxiaolv.surgeon:surgeon-core:0.0.1'
-//    compile 'com.tangxiaolv.surgeon:surgeon-annotations:0.0.2'
-//    compile project('')
+    annotationProcessor project(':surgeon-compile')
+    compile project(':sdk')
+
 }
