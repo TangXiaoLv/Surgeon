@@ -31,9 +31,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'org.aspectj:aspectjrt:1.8.10'
-    compile project(':surgeon-annotations')
-//    compile 'com.tangxiaolv.surgeon:surgeon-annotations:0.0.6'
-
+    compile 'com.tangxiaolv.surgeon:surgeon-annotations:1.0.0'
 }
 
 android.libraryVariants.all { variant ->
@@ -72,5 +70,4 @@ android.libraryVariants.all { variant ->
     }
 }
 
-//apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')
-apply from: 'localpush.gradle'
+apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')
