@@ -19,5 +19,4 @@ android {
 dependencies {
 }
 
-//apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')
-//apply from: 'localpush.gradle'
+apply from: rootProject.file('gradle/gradle-jcenter-push.gradle')

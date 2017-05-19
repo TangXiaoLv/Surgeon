@@ -13,18 +13,14 @@ buildscript {
         classpath 'com.tangxiaolv.surgeon:surgeon-plugin:0.0.13'
 
         //jcenter push plugin
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
-//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
 
     }
 }
 
 allprojects {
     repositories {
-        maven {
-            url uri('../repo')
-        }
-        mavenCentral()
         jcenter()
     }
 }

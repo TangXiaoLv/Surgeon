@@ -9,4 +9,4 @@
 .externalNativeBuild
 .idea
 repo
-gradle.properties
+/gradle.properties

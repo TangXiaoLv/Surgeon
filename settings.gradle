@@ -1,5 +1,5 @@
-include ':simple'
-include ':sdk'
+include ':example:simple'
+include ':example:sdk'
 include ':surgeon-annotations'
 include ':surgeon-plugin'
 include ':surgeon-compile'

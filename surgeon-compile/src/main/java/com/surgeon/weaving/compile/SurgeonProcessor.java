@@ -40,8 +40,8 @@ public class SurgeonProcessor extends AbstractProcessor {
     private static final String PACKAGE_NAME = "com.surgeon.weaving.masters";
     private static final String PREFIX = "Master_";
 
-    private static final ClassName ISurgeonMaster = ClassName.get("com.surgeon.weaving.core.interfaces", "ISurgeonMaster");
-    private static final ClassName SurgeonMethod = ClassName.get("com.surgeon.weaving.masters", "SurgeonMethod");
+    private static final ClassName ISurgeonMaster = ClassName.get("com.surgeon.weaving.core.interfaces", "IMaster");
+    private static final ClassName SurgeonMethod = ClassName.get("com.surgeon.weaving.core", "SurgeonMethod");
 
 
     private Elements elementUtils;
@@ -180,7 +180,7 @@ public class SurgeonProcessor extends AbstractProcessor {
                         //method inner end
                         sm.simpleParamsName,
                         sm.simpleParamsTypes);
-                        //.addCode("\n");
+                //.addCode("\n");
             }
 
             // method build
@@ -213,7 +213,7 @@ public class SurgeonProcessor extends AbstractProcessor {
 
     private SurgeonMethod parseToSurgeonMethod(Element element) {
         SurgeonMethod method = new SurgeonMethod();
-        String agrs = ((ExecutableElement) element).getParameters().toString();
+        String args = ((ExecutableElement) element).getParameters().toString();
         String types = "";
         String additionParamsTypes = element.toString();
         int start = additionParamsTypes.indexOf("(");
@@ -228,8 +228,10 @@ public class SurgeonProcessor extends AbstractProcessor {
             additionParamsTypes = ")";
         }
 
-        method.simpleParamsName = agrs;
-        method.simpleParamsTypes = types;
+        //method.simpleParamsName = args;
+        //method.simpleParamsTypes = types;
+        method.simpleParamsName = "";
+        method.simpleParamsTypes = "";
         method.method = "$T.class.getMethod($S," + additionParamsTypes;
         return method;
     }
