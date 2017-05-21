@@ -19,7 +19,7 @@
             android:background="@color/colorPrimary"
             android:onClick="oneClick"
             android:textSize="16sp"
-            android:text="@string/tag"/>
+            android:text="one"/>
 
     <Button
             android:layout_width="wrap_content"

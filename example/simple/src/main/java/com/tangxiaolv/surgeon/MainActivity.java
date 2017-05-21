@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.surgeon.weaving.annotations.ReplaceAble;
 import com.tangxiaolv.sdk.SDKActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,10 +20,14 @@ public class MainActivity extends AppCompatActivity {
         content = (TextView) findViewById(R.id.content);
     }
 
+
+    @ReplaceAble
     public void oneClick(View view) {
+        content.setText("one");
     }
 
     public void twoClick(View view) {
+        content.setText("two");
     }
 
     public void threeClick(View view) {

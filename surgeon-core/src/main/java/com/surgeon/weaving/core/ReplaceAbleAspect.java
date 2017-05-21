@@ -1,6 +1,7 @@
 package com.surgeon.weaving.core;
 
 import com.surgeon.weaving.annotations.ReplaceAble;
+import com.surgeon.weaving.core.interfaces.Continue;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -14,9 +15,9 @@ import org.aspectj.lang.reflect.MethodSignature;
  * Singleton
  */
 @Aspect
-public class SurgeonAspect {
+public class ReplaceAbleAspect {
 
-    @Pointcut("within(@com.surgeon.weaving.annotations.ReplacedAble *)")
+    @Pointcut("within(@com.surgeon.weaving.annotations.ReplaceAble *)")
     public void withinAnnotatedClass() {
     }
 
@@ -28,27 +29,25 @@ public class SurgeonAspect {
     public void constructorInsideAnnotatedType() {
     }
 
-    //any method with ReplacedAble
-    @Pointcut("execution(@com.surgeon.weaving.annotations.ReplacedAble * *(..)) || methodInsideAnnotatedType()")
+    //any method with ReplaceAble
+    @Pointcut("execution(@com.surgeon.weaving.annotations.ReplaceAble * *(..)) || methodInsideAnnotatedType()")
     public void method() {
     }
 
-    //any constructor with ReplacedAble
-    @Pointcut("execution(@com.surgeon.weaving.annotations.ReplacedAble *.new(..)) || constructorInsideAnnotatedType()")
+    //any constructor with ReplaceAble
+    @Pointcut("execution(@com.surgeon.weaving.annotations.ReplaceAble *.new(..)) || constructorInsideAnnotatedType()")
     public void constructor() {
     }
 
     @Around("method() || constructor()")
     public Object replacedIfNeeded(ProceedingJoinPoint jPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) jPoint.getSignature();
-        String declaringTypeName = signature.getDeclaringTypeName();
+        String namespace = signature.getDeclaringTypeName();
         String methodName = signature.getName();
         ReplaceAble replaceAble = signature.getMethod().getAnnotation(ReplaceAble.class);
-        String fullName = methodName + "." + replaceAble.extra();
-        Object result = MasterFinder.getInstance().findAndInvoke(declaringTypeName, fullName, jPoint.getThis(), jPoint.getArgs());
-        if (result != void.class) {
-            return result;
-        }
-        return jPoint.proceed();
+        String extra = replaceAble.extra();
+        String fullName = methodName + (extra.length() == 0 ? "" : "." + extra);
+        Object result = MasterFinder.getInstance().findAndInvoke(namespace, fullName, jPoint.getThis(), jPoint.getArgs());
+        return result != Continue.class ? result : jPoint.proceed();
     }
 }

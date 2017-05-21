@@ -1,21 +1,23 @@
 package com.surgeon.weaving.core;
 
 import com.surgeon.weaving.core.interfaces.IMaster;
+import com.surgeon.weaving.core.interfaces.Continue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SurgeonCache {
+class InnerCache {
 
     private final Map<String, IMaster> masterCache = new HashMap<>();
-    private final Map<IMaster, Object> ownerCache = new HashMap<>();
+    private final Map<Class, Object> ownerCache = new HashMap<>();
+    private final Map<String, ResultWapper> resultWapperCache = new HashMap<>();
 
     private static class Lazy {
-        static SurgeonCache sSurgeonCache = new SurgeonCache();
+        static InnerCache sInnerCache = new InnerCache();
     }
 
-    static SurgeonCache getInstance() {
-        return SurgeonCache.Lazy.sSurgeonCache;
+    static InnerCache getInstance() {
+        return InnerCache.Lazy.sInnerCache;
     }
 
     synchronized void putMaster(String key, IMaster master) {
@@ -31,16 +33,29 @@ public class SurgeonCache {
         return null;
     }
 
-    synchronized void putTarget(IMaster key, Object target) {
+    synchronized void putMethodOwner(Class key, Object target) {
         if (key != null && target != null && ownerCache.get(key) == null) {
             ownerCache.put(key, target);
         }
     }
 
-    synchronized Object getOwner(IMaster key) {
+    synchronized Object getMethodOwner(Class key) {
         if (key != null) {
             return ownerCache.get(key);
         }
         return null;
+    }
+
+    synchronized void addResultWapper(String key, ResultWapper value) {
+        if (key != null) {
+            resultWapperCache.put(key, value);
+        }
+    }
+
+    synchronized Object popResultWapper(String key) {
+        if (resultWapperCache.containsKey(key)) {
+            return resultWapperCache.remove(key);
+        }
+        return Continue.class;
     }
 }

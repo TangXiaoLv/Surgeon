@@ -43,7 +43,6 @@ public class SurgeonProcessor extends AbstractProcessor {
     private static final ClassName ISurgeonMaster = ClassName.get("com.surgeon.weaving.core.interfaces", "IMaster");
     private static final ClassName SurgeonMethod = ClassName.get("com.surgeon.weaving.core", "SurgeonMethod");
 
-
     private Elements elementUtils;
     private Filer filer;
 
@@ -125,7 +124,7 @@ public class SurgeonProcessor extends AbstractProcessor {
                 int lastPointIndex = ref.lastIndexOf(".");
                 String namespace = ref.substring(0, lastPointIndex);
                 String methodName = ref.substring(lastPointIndex + 1, ref.length());
-                String fullName = methodName + "." + extra;
+                String fullName = methodName + (extra.length() == 0 ? "" : "." + extra);
 
                 Map<String, Element> collect;
                 if (group.containsKey(namespace)) {
