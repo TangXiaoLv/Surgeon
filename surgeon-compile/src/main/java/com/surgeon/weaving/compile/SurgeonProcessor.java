@@ -9,6 +9,8 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.surgeon.weaving.annotations.Replace;
+import com.surgeon.weaving.annotations.ReplaceAfter;
+import com.surgeon.weaving.annotations.ReplaceBefore;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -70,6 +72,8 @@ public class SurgeonProcessor extends AbstractProcessor {
     private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
         annotations.add(Replace.class);
+        annotations.add(ReplaceAfter.class);
+        annotations.add(ReplaceBefore.class);
         return annotations;
     }
 
@@ -110,43 +114,66 @@ public class SurgeonProcessor extends AbstractProcessor {
         List<JavaFile> javaFiles = new ArrayList<>();
 
         // Process each @Replace element.
-        Set<? extends Element> elements = env.getElementsAnnotatedWith(Replace.class);
-        if (elements != null && elements.size() > 0) {
-            Map<String, Map<String, Element>> group = new HashMap<>();
-            for (Element e : elements) {
-                if (!SuperficialValidation.validateElement(e)) {
-                    continue;
-                }
-
-                Replace replace = e.getAnnotation(Replace.class);
-                String ref = replace.ref();
-                String extra = replace.extra();
-                int lastPointIndex = ref.lastIndexOf(".");
-                String namespace = ref.substring(0, lastPointIndex);
-                String methodName = ref.substring(lastPointIndex + 1, ref.length());
-                String fullName = methodName + (extra.length() == 0 ? "" : "." + extra);
-
-                Map<String, Element> collect;
-                if (group.containsKey(namespace)) {
-                    collect = group.get(namespace);
-                    if (collect.containsKey(fullName)) {
-                        error("duplicate define %s.%s", ref, extra);
-                    }
-                } else {
-                    collect = new HashMap<>();
-                }
-                collect.put(fullName, e);
-                group.put(namespace, collect);
+        Map<String, Map<String, Element>> group = new HashMap<>();
+        for (Element e : env.getElementsAnnotatedWith(Replace.class)) {
+            if (!SuperficialValidation.validateElement(e)) {
+                continue;
             }
-            generateMasterJavaFile(group, javaFiles);
+
+            Replace replace = e.getAnnotation(Replace.class);
+            parseReplace(e, group, "", replace.ref(), replace.extra());
         }
+
+        for (Element e : env.getElementsAnnotatedWith(ReplaceBefore.class)) {
+            if (!SuperficialValidation.validateElement(e)) {
+                continue;
+            }
+            ReplaceBefore replace = e.getAnnotation(ReplaceBefore.class);
+            parseReplace(e, group, "before_", replace.ref(), replace.extra());
+        }
+
+        for (Element e : env.getElementsAnnotatedWith(ReplaceAfter.class)) {
+            if (!SuperficialValidation.validateElement(e)) {
+                continue;
+            }
+            ReplaceAfter replace = e.getAnnotation(ReplaceAfter.class);
+            parseReplace(e, group, "after_", replace.ref(), replace.extra());
+        }
+
+        generateMasterJavaFile(group, javaFiles);
         return javaFiles;
+    }
+
+    private void parseReplace(
+            Element e,
+            Map<String, Map<String, Element>> group,
+            String prefix,
+            String ref,
+            String extra) {
+        int lastPointIndex = ref.lastIndexOf(".");
+        String namespace = ref.substring(0, lastPointIndex);
+        String methodName = ref.substring(lastPointIndex + 1, ref.length());
+        String fullName = prefix + methodName + (extra.length() == 0 ? "" : "." + extra);
+
+        Map<String, Element> collect;
+        if (group.containsKey(namespace)) {
+            collect = group.get(namespace);
+            if (collect.containsKey(fullName)) {
+                error("duplicate define %s.%s", ref, extra);
+            }
+        } else {
+            collect = new HashMap<>();
+        }
+        collect.put(fullName, e);
+        group.put(namespace, collect);
     }
 
     private void generateMasterJavaFile(Map<String, Map<String, Element>> groups, List<JavaFile> javaFiles) {
         Set<Map.Entry<String, Map<String, Element>>> kvs = groups.entrySet();
         for (Map.Entry<String, Map<String, Element>> group : kvs) {
             String namespace = group.getKey();
+            if (isEmpty(namespace)) return;
+
             Map<String, Element> methodMappings = group.getValue();
 
             // constructor build
@@ -159,10 +186,6 @@ public class SurgeonProcessor extends AbstractProcessor {
             for (Map.Entry<String, Element> mapping : methodMappings.entrySet()) {
                 String fullName = mapping.getKey();//method name + "." + extra
                 Element element = mapping.getValue();
-
-                Replace replace = element.getAnnotation(Replace.class);
-                String ref = replace.ref();
-                if (isEmpty(ref)) return;
 
                 SurgeonMethod sm = parseToSurgeonMethod(element);
                 sm.owner = ClassName.get(((TypeElement) element.getEnclosingElement()));

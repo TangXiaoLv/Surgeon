@@ -1,5 +1,9 @@
 package com.surgeon.weaving.core.interfaces;
 
 public interface Replacer {
-    Object invoke(Object[] params);
+    void before(Object[] params);
+
+    Object replace(Object[] params);
+
+    void after(Object[] params);
 }

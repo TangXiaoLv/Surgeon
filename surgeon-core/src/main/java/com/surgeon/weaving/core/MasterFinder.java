@@ -42,12 +42,19 @@ class MasterFinder {
             System.arraycopy(args, 0, newArgs, 1, args.length);
 
             //runtime repalce
-            String methodPath = namespace + "." + fullName;
+            String a = fullName;
+            /*if (fullName.contains("before_")) {
+                a = fullName.replace("before_", "");
+            } else if (fullName.contains("after_")) {
+                a = fullName.replace("after_", "");
+            }*/
+
+            String methodPath = namespace + "." + a;
             Object result = InnerCache.getInstance().popResultWapper(methodPath);
             if (result != Continue.class) {
                 ResultWapper resultWapper = (ResultWapper) result;
                 if (resultWapper.isReplacer()) {
-                    return ((Replacer) resultWapper.getResult()).invoke(newArgs);
+                    return ((Replacer) resultWapper.getResult()).replace(newArgs);
                 }
                 return resultWapper.getResult();
             }

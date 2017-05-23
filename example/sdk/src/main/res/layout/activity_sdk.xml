@@ -11,16 +11,16 @@
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="runtimeResult"
+            android:onClick="addRuntimeResult"
             android:textSize="16sp"
-            android:text="Runtime Result"/>
+            android:text="add Runtime Result"/>
 
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="runtimeMethod"
+            android:onClick="addRuntimeMethod"
             android:textSize="16sp"
-            android:text="Runtime Method"/>
+            android:text="add Runtime Method"/>
 
     <Button
             android:id="@+id/btn"
@@ -46,6 +46,7 @@
 
     <TextView
             android:id="@+id/content"
+            android:text="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 </com.tangxiaolv.sdk.MyLinearLayout>

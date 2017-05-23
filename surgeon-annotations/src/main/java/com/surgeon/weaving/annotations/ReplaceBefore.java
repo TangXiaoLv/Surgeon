@@ -8,7 +8,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 
 @Retention(CLASS)
 @Target({METHOD})
-public @interface Replace {
+public @interface ReplaceBefore {
     String ref();
 
     String extra() default "";
