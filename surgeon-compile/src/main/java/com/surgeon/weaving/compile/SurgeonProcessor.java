@@ -119,11 +119,11 @@ public class SurgeonProcessor extends AbstractProcessor {
             if (!SuperficialValidation.validateElement(e)) {
                 continue;
             }
-
             Replace replace = e.getAnnotation(Replace.class);
             parseReplace(e, group, "", replace.ref(), replace.extra());
         }
 
+        // Process each @ReplaceBefore element.
         for (Element e : env.getElementsAnnotatedWith(ReplaceBefore.class)) {
             if (!SuperficialValidation.validateElement(e)) {
                 continue;
@@ -132,6 +132,7 @@ public class SurgeonProcessor extends AbstractProcessor {
             parseReplace(e, group, "before_", replace.ref(), replace.extra());
         }
 
+        // Process each @ReplaceAfter element.
         for (Element e : env.getElementsAnnotatedWith(ReplaceAfter.class)) {
             if (!SuperficialValidation.validateElement(e)) {
                 continue;
@@ -250,6 +251,7 @@ public class SurgeonProcessor extends AbstractProcessor {
             additionParamsTypes = ")";
         }
 
+        //TODO maybe used in future
         //method.simpleParamsName = args;
         //method.simpleParamsTypes = types;
         method.simpleParamsName = "";

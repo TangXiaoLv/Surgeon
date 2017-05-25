@@ -6,9 +6,20 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.CLASS;
 
+/**
+ * Replace new method when target method called.
+ */
 @Retention(CLASS)
 @Target({METHOD})
 public @interface Replace {
+
+    /**
+     * The target method reference
+     */
     String ref();
+
+    /**
+     * Extra mark,Usually used in override.
+     */
     String extra() default "";
 }

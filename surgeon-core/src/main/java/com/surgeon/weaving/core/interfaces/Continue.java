@@ -1,7 +1,8 @@
 package com.surgeon.weaving.core.interfaces;
 
 /**
- * The mark of origin method.Used in {@link com.surgeon.weaving.core.ReplaceAbleAspect}.
+ * If {@link com.surgeon.weaving.core.MasterFinder#findAndInvoke} return Continue.class,Continue to
+ * call original method.
  */
 public interface Continue {
 }

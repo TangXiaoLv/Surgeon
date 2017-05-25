@@ -1,6 +1,7 @@
 package com.tangxiaolv.sdk;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +26,8 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void addRuntimeResult(View view) {
-        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
+//        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
+        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", null);
     }
 
     public void addRuntimeMethod(View view) {
@@ -54,11 +56,18 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void twoClick(View view) {
-        content.setText(getTwo());
+        String two = getTwo();
+        content.setText(two == null ? "null" : two);
     }
 
     public void threeClick(View view) {
-        content.setText(getThree(((Button) view).getText().toString()));
+//        content.setText(getThree(((Button) view).getText().toString()));
+        content.setText(StringUtils.getThree());
+    }
+
+    @ReplaceAble
+    private Fragment getF(){
+        return null;
     }
 
     @ReplaceAble
@@ -69,11 +78,6 @@ public class SDKActivity extends AppCompatActivity {
     @ReplaceAble
     private final static String getTwo() {
         return "TWO";
-    }
-
-    @ReplaceAble
-    private String getThree() {
-        return "THREE";
     }
 
     @ReplaceAble(extra = "text")

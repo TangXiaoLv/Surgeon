@@ -15,9 +15,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class HotReplace implements ISurgeon {
 
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.oneClick")
-    public Object showToast(Object target, View view) {
+    public void showToast(Object target, View view) {
         Toast.makeText(view.getContext(), "被拦截拉！！！", Toast.LENGTH_SHORT).show();
-        return "被拦截拉";
     }
 
 //    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.oneClick")

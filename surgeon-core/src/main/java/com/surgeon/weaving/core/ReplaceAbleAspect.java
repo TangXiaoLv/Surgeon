@@ -11,6 +11,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import static com.surgeon.weaving.core.ASPConstant.AFTER;
+import static com.surgeon.weaving.core.ASPConstant.BEFORE;
+import static com.surgeon.weaving.core.ASPConstant.EMPTY;
+
 /**
  * Target interceptor.
  *
@@ -18,9 +22,6 @@ import org.aspectj.lang.reflect.MethodSignature;
  */
 @Aspect
 public class ReplaceAbleAspect {
-
-    private static final String BEFORE = "before_";
-    private static final String AFTER = "after_";
 
     @Pointcut("within(@com.surgeon.weaving.annotations.ReplaceAble *)")
     public void withinAnnotatedClass() {
@@ -41,8 +42,10 @@ public class ReplaceAbleAspect {
         String namespace = pair[0];
         String fullName = pair[1];
 
-        MasterFinder.getInstance().findAndInvoke(namespace, BEFORE + fullName, jPoint.getThis(), jPoint.getArgs());
-        Object result = MasterFinder.getInstance().findAndInvoke(namespace, fullName, jPoint.getThis(), jPoint.getArgs());
+        //invoke before method
+        MasterFinder.getInstance().findAndInvoke(namespace, BEFORE, fullName, jPoint.getThis(), jPoint.getArgs());
+        //invoke method
+        Object result = MasterFinder.getInstance().findAndInvoke(namespace, EMPTY, fullName, jPoint.getThis(), jPoint.getArgs());
         return result != Continue.class ? result : jPoint.proceed();
     }
 
@@ -52,7 +55,8 @@ public class ReplaceAbleAspect {
         String namespace = pair[0];
         String fullName = pair[1];
 
-        MasterFinder.getInstance().findAndInvoke(namespace, AFTER + fullName, jPoint.getThis(), jPoint.getArgs());
+        //invoke after method
+        MasterFinder.getInstance().findAndInvoke(namespace, AFTER, fullName, jPoint.getThis(), jPoint.getArgs());
     }
 
     private String[] parseNamespaceAndMethodName(JoinPoint jPoint) {

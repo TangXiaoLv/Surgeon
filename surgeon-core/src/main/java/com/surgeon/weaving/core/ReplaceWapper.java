@@ -1,11 +1,11 @@
 package com.surgeon.weaving.core;
 
-class ResultWapper {
+class ReplaceWapper {
 
     private boolean replacer;
     private Object result;
 
-    ResultWapper(Object result, boolean replacer) {
+    ReplaceWapper(Object result, boolean replacer) {
         this.result = result;
         this.replacer = replacer;
     }

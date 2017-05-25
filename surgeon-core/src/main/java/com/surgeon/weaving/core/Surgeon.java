@@ -4,11 +4,23 @@ import com.surgeon.weaving.core.interfaces.Replacer;
 
 public class Surgeon {
 
-    public static void replace(String path, Object result) {
-        InnerCache.getInstance().addResultWapper(path, new ResultWapper(result, false));
+    /**
+     * Runtime to replace original method's result.
+     *
+     * @param ref    The original method reference.
+     * @param result New result.
+     */
+    public static void replace(String ref, Object result) {
+        InnerCache.getInstance().addReplaceWapper(ref, new ReplaceWapper(result, false));
     }
 
-    public static void replace(String path, Replacer replacer) {
-        InnerCache.getInstance().addResultWapper(path, new ResultWapper(replacer, true));
+    /**
+     * Runtime to replace original method.
+     *
+     * @param ref      The original method reference.
+     * @param replacer New method.
+     */
+    public static void replace(String ref, Replacer replacer) {
+        InnerCache.getInstance().addReplaceWapper(ref, new ReplaceWapper(replacer, replacer != null));
     }
 }

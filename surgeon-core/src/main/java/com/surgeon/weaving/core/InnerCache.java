@@ -1,5 +1,7 @@
 package com.surgeon.weaving.core;
 
+import android.util.LruCache;
+
 import com.surgeon.weaving.core.interfaces.IMaster;
 import com.surgeon.weaving.core.interfaces.Continue;
 
@@ -8,9 +10,9 @@ import java.util.Map;
 
 class InnerCache {
 
-    private final Map<String, IMaster> masterCache = new HashMap<>();
-    private final Map<Class, Object> ownerCache = new HashMap<>();
-    private final Map<String, ResultWapper> resultWapperCache = new HashMap<>();
+    private final LruCache<String, IMaster> masterCache = new LruCache<>(20);
+    private final LruCache<Class, Object> ownerCache = new LruCache<>(20);
+    private final Map<String, ReplaceWapper> replaceWapperCache = new HashMap<>();
 
     private static class Lazy {
         static InnerCache sInnerCache = new InnerCache();
@@ -20,9 +22,9 @@ class InnerCache {
         return InnerCache.Lazy.sInnerCache;
     }
 
-    synchronized void putMaster(String key, IMaster master) {
-        if (key != null && master != null && masterCache.get(key) == null) {
-            masterCache.put(key, master);
+    synchronized void putMaster(String ref, IMaster master) {
+        if (ref != null && master != null && masterCache.get(ref) == null) {
+            masterCache.put(ref, master);
         }
     }
 
@@ -33,28 +35,35 @@ class InnerCache {
         return null;
     }
 
-    synchronized void putMethodOwner(Class key, Object target) {
-        if (key != null && target != null && ownerCache.get(key) == null) {
-            ownerCache.put(key, target);
+    synchronized void putMethodOwner(Class owner, Object ownerInstance) {
+        if (owner != null && ownerInstance != null && ownerCache.get(owner) == null) {
+            ownerCache.put(owner, ownerInstance);
         }
     }
 
-    synchronized Object getMethodOwner(Class key) {
-        if (key != null) {
-            return ownerCache.get(key);
+    synchronized Object getMethodOwner(Class owner) {
+        if (owner != null) {
+            return ownerCache.get(owner);
         }
         return null;
     }
 
-    synchronized void addResultWapper(String key, ResultWapper value) {
-        if (key != null) {
-            resultWapperCache.put(key, value);
+    synchronized void addReplaceWapper(String ref, ReplaceWapper wapper) {
+        if (ref != null) {
+            replaceWapperCache.put(ref, wapper);
         }
     }
 
-    synchronized Object popResultWapper(String key) {
-        if (resultWapperCache.containsKey(key)) {
-            return resultWapperCache.remove(key);
+    synchronized Object popReplaceWapper(String ref) {
+        if (replaceWapperCache.containsKey(ref)) {
+            return replaceWapperCache.remove(ref);
+        }
+        return Continue.class;
+    }
+
+    synchronized Object getReplaceWapper(String ref) {
+        if (replaceWapperCache.containsKey(ref)) {
+            return replaceWapperCache.get(ref);
         }
         return Continue.class;
     }
