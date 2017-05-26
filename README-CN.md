@@ -1,5 +1,5 @@
 # Surgeon
-[English](https://github.com/TangXiaoLv/Surgeon/blob/1.0.0/README.md) | 中文
+[English](https://github.com/TangXiaoLv/Surgeon/blob/master/README.md) | 中文
 
 <img src="img/1.png" width = "200" height = "200"/>
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:x.x.x'//version参照上表
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.0'//version参照上表
     }
 }
 
@@ -31,7 +31,7 @@ apply plugin: 'com.tangxiaolv.surgeon'
 
 //添加注解解析器
 dependencies {
-    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:x.x.x'//version参照上表
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.0'//version参照上表
 }
 ```
 
@@ -45,13 +45,13 @@ private String getTwo() {
 }
 ```
 
-**二：在替换方法上配置目标方法的路径的注解**
+**二：在替换方法上配置目标方法路径的注解**
 ```java
 //创建新类实现ISurgeon
 public class HotReplace implements ISurgeon {
     /**
      * ref为目标方法的packageName+className+methodName
-     * @param target 目标方法所在对象
+     * @param target 默认传递:目标方法所在对象,如果目标方法为静态,target为null
      */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public String getTwo(Object target) {
@@ -91,7 +91,7 @@ public class HotReplace implements ISurgeon {
     
     //目标重载方法替换
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
-    public String getTwo(Object target,String text) {
+    public String getTwo(Object target,String text/**目标方法参数*/) {
         return "getTwo from remote";
     }
     
@@ -100,7 +100,6 @@ public class HotReplace implements ISurgeon {
     public void getTwoAfter(Object target) {
     }
 }
-
 ```
 
 **一：动态替换**
@@ -118,6 +117,7 @@ Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String
         super.before(params);
     }
 
+    //params[0] = target,其他是目标方法参数
     @Override
     public String replace(Object[] params) {
         return super.replace(params);

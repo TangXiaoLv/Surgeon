@@ -1,43 +1,45 @@
 # Surgeon
-[English](https://github.com/TangXiaoLv/Surgeon/blob/1.0.0/README.md) | 中文
+English | [中文](https://github.com/TangXiaoLv/Surgeon/blob/master/README-CN.md)
 
 <img src="img/1.png" width = "200" height = "200"/>
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|最新版本|1.0.0|1.0.0|
+|latest|1.0.0|1.0.0|
 
-Surgeon是Android上一个简单，灵活，高性能的方法热替换框架。
+Surgeon is a hot method replace framework for Android which was simple to use,flexible,high-performance.
 
-集成
+Integration
 ---
 ```gradle
-//添加插件
+//add plugin
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:x.x.x'//version参照上表
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.0'
     }
 }
 
-//引用插件
+//use plugin
 apply plugin: 'com.android.library'
 apply plugin: 'com.tangxiaolv.surgeon'
-或
+
+or
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.tangxiaolv.surgeon'
 
-//添加注解解析器
+//add annotationProcessor
 dependencies {
-    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:x.x.x'//version参照上表
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.0'
 }
 ```
 
-快速入门
+Getting Started
 ---
-**一：在library/application中目标方法上加上注解**
+**1.Add annotation on target method**
 ```java
 @ReplaceAble
 private String getTwo() {
@@ -45,13 +47,13 @@ private String getTwo() {
 }
 ```
 
-**二：在替换方法上配置目标方法的路径的注解**
+**2.Add annotation on replace method**
 ```java
-//创建新类实现ISurgeon
+//Create ISurgeon subclass.
 public class HotReplace implements ISurgeon {
     /**
-     * ref为目标方法的packageName+className+methodName
-     * @param target 目标方法所在对象
+     * ref = target(packageName + className + methodName)
+     * @param target Defualt passed,The target method owner object,If target method is static then it equal null.
      */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public String getTwo(Object target) {
@@ -60,9 +62,9 @@ public class HotReplace implements ISurgeon {
 }
 ```
 
-进阶
+Advance
 ---
-**目标方法**
+**Target method**
 ```java
 @ReplaceAble
 private String getTwo() {
@@ -75,49 +77,49 @@ private String getTwo(String text) {
 }
 ```
 
-**一：静态替换**
+**1.Static Replace**
 ```java
 public class HotReplace implements ISurgeon {
-    //调用目标方法前调用
+    //called before target method call
     @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoBefore(Object target) {
     }
     
-    //替换目标方法
+    //replace target method
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public String getTwo(Object target) {
         return "getTwo from remote";
     }
     
-    //目标重载方法替换
+    //replace target override method
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
-    public String getTwo(Object target,String text) {
+    public String getTwo(Object target,String text/**target method params*/) {
         return "getTwo from remote";
     }
     
-    //目标方法调用之后调用
+    //called after target method call
     @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoAfter(Object target) {
     }
 }
-
 ```
 
-**一：动态替换**
+**1.Runtime Replace**
 ```java
-//替换目标方法返回值
+//replace return value for target method
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
 
-//替换目标重载方法返回值
+//replace return value for target override method 
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo.text", "Runtime result");
 
-//替换目标方法
+//replace target method
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>(){
     @Override
     public void before(Object[] params) {
         super.before(params);
     }
 
+    //params[0] = target,the other is target params 
     @Override
     public String replace(Object[] params) {
         return super.replace(params);
@@ -130,9 +132,8 @@ Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String
 });
 ```
 
-**混淆**
+**ProGuard**
 ```
-//配置混淆
 -keep class * implements com.surgeon.weaving.core.interfaces.ISurgeon{*;}
 -keep class * implements com.surgeon.weaving.core.interfaces.IMaster{*;}
 ```
