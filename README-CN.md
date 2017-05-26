@@ -130,7 +130,8 @@ Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String
 });
 ```
 
-**混淆**
+混淆
+---
 ```
 //配置混淆
 -keep class * implements com.surgeon.weaving.core.interfaces.ISurgeon{*;}
