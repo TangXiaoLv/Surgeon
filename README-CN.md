@@ -1,79 +1,140 @@
 # Surgeon
-[English](https://github.com/TangXiaoLv/Android-Router/blob/master/README.md) | 中文
+[English](https://github.com/TangXiaoLv/Surgeon/blob/1.0.0/README.md) | 中文
 
-<img src="img/2.png" width = "660" height = "300"/>
+<img src="img/1.png" width = "200" height = "200"/>
 
-|Lib|androidrouter|androidrouter-compiler|androidrouter-annotations|
-|:---:|:---|:---|:---|
-|最新版本|2.0.6|1.0.1|1.0.0|
+|Lib|surgeon-plugin|surgeon-compile|
+|:---:|:---|:---|
+|最新版本|1.0.0|1.0.0|
 
-高性能，灵活，简单易用的轻量级Android组件化协议框架，用来解决复杂工程的互相依赖，解耦出的单个模块有利于独立开发和维护。
+Surgeon是Android上一个简单，灵活，高性能的方法热替换框架。
 
-Update Log
----
-```
-```
-
-目标
----
-- 工程解耦
-- 模块独立开发独立维护
-- 让生活变得美好
-
-特性
----
-- 编译时处理注解生成模板代码
-
-组件化路由图
----
-
-<img src="img/1.png" width = "824" height = "528"/>
-
-Gradle
+集成
 ---
 ```gradle
-//需要在各自的application/library 中添加依赖
-//android plugin version >= 2.2+
-dependencies {
-    compile 'com.library.tangxiaolv:androidrouter:x.x.x'
-    annotationProcessor 'com.library.tangxiaolv:androidrouter-compiler:x.x.x'
-}
-
-//android plugin version < 2.2
-apply plugin: 'com.neenbedankt.android-apt'
-
+//添加插件
 buildscript {
     repositories {
         jcenter()
     }
-
     dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:x.x.x'//version参照上表
     }
 }
 
+//引用插件
+apply plugin: 'com.android.library'
+apply plugin: 'com.tangxiaolv.surgeon'
+或
+apply plugin: 'com.android.application'
+apply plugin: 'com.tangxiaolv.surgeon'
+
+//添加注解解析器
 dependencies {
-    compile 'com.library.tangxiaolv:androidrouter:x.x.x'
-    apt 'com.library.tangxiaolv:androidrouter-compiler:x.x.x'
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:x.x.x'//version参照上表
 }
 ```
 
 快速入门
 ---
-**第一步:给自定义Module配置注解协议**
+**一：在library/application中目标方法上加上注解**
 ```java
+@ReplaceAble
+private String getTwo() {
+    return "TWO";
+}
 ```
 
-**第二步:调用协议**
+**二：在替换方法上配置目标方法的路径的注解**
 ```java
+//创建新类实现ISurgeon
+public class HotReplace implements ISurgeon {
+    /**
+     * ref为目标方法的packageName+className+methodName
+     * @param target 目标方法所在对象
+     */
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    public String getTwo(Object target) {
+        return "getTwo from HotReplace2";
+    }
+}
+```
 
+进阶
+---
+**目标方法**
+```java
+@ReplaceAble
+private String getTwo() {
+    return "TWO";
+}
+
+@ReplaceAble(extra = "text")
+private String getTwo(String text) {
+    return text;
+}
+```
+
+**一：静态替换**
+```java
+public class HotReplace implements ISurgeon {
+    //调用目标方法前调用
+    @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    public void getTwoBefore(Object target) {
+    }
+    
+    //替换目标方法
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    public String getTwo(Object target) {
+        return "getTwo from remote";
+    }
+    
+    //目标重载方法替换
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
+    public String getTwo(Object target,String text) {
+        return "getTwo from remote";
+    }
+    
+    //目标方法调用之后调用
+    @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    public void getTwoAfter(Object target) {
+    }
+}
+
+```
+
+**一：动态替换**
+```java
+//替换目标方法返回值
+Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
+
+//替换目标重载方法返回值
+Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo.text", "Runtime result");
+
+//替换目标方法
+Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>(){
+    @Override
+    public void before(Object[] params) {
+        super.before(params);
+    }
+
+    @Override
+    public String replace(Object[] params) {
+        return super.replace(params);
+    }
+
+    @Override
+    public void after(Object[] params) {
+        super.after(params);
+    }
+});
 ```
 
 **混淆**
 ```
 //配置混淆
--keep class * implements com.tangxiaolv.router.interfaces.IMirror{*;}
--keep class * implements com.tangxiaolv.router.interfaces.IRouter{*;}
+-keep class * implements com.surgeon.weaving.core.interfaces.ISurgeon{*;}
+-keep class * implements com.surgeon.weaving.core.interfaces.IMaster{*;}
 ```
 
 License

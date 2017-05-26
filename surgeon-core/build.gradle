@@ -31,8 +31,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'org.aspectj:aspectjrt:1.8.10'
-//    compile 'com.tangxiaolv.surgeon:surgeon-annotations:1.0.0'
-    compile project(':surgeon-annotations')
+    compile 'com.tangxiaolv.surgeon:surgeon-annotations:1.0.0'
+    //compile project(':surgeon-annotations')
 }
 
 android.libraryVariants.all { variant ->

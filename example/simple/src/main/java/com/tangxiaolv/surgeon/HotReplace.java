@@ -18,10 +18,4 @@ public class HotReplace implements ISurgeon {
     public void showToast(Object target, View view) {
         Toast.makeText(view.getContext(), "被拦截拉！！！", Toast.LENGTH_SHORT).show();
     }
-
-//    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.oneClick")
-//    public Object showToast(Object target, View view) {
-//        Toast.makeText(view.getContext(), "被拦截拉！！！", Toast.LENGTH_SHORT).show();
-//        return void.class;
-//    }
 }

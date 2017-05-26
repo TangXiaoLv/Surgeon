@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.surgeon.weaving.annotations.ReplaceAble;
 import com.surgeon.weaving.core.Surgeon;
 import com.surgeon.weaving.core.interfaces.Replacer;
+import com.surgeon.weaving.core.interfaces.ReplacerImpl;
 
 import static android.support.v7.widget.AppCompatDrawableManager.get;
 
@@ -26,19 +27,18 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void addRuntimeResult(View view) {
-//        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
-        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", null);
+        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
     }
 
     public void addRuntimeMethod(View view) {
-        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new Replacer() {
+        Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>() {
             @Override
             public void before(Object[] params) {
                 System.out.println();
             }
 
             @Override
-            public Object replace(Object[] params) {
+            public String replace(Object[] params) {
                 Toast.makeText(SDKActivity.this, "Runtime Replace", Toast.LENGTH_SHORT).show();
                 return "Runtime method";
             }
@@ -61,13 +61,7 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void threeClick(View view) {
-//        content.setText(getThree(((Button) view).getText().toString()));
         content.setText(StringUtils.getThree());
-    }
-
-    @ReplaceAble
-    private Fragment getF(){
-        return null;
     }
 
     @ReplaceAble
@@ -78,6 +72,11 @@ public class SDKActivity extends AppCompatActivity {
     @ReplaceAble
     private final static String getTwo() {
         return "TWO";
+    }
+
+    @ReplaceAble(extra = "text")
+    private String getTwo(String text) {
+        return text;
     }
 
     @ReplaceAble(extra = "text")

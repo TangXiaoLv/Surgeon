@@ -12,6 +12,11 @@ public class HotReplace2 implements ISurgeon {
         System.out.println();
     }
 
+    /**
+     * ref为目标方法的packageName+className+methodName
+     *
+     * @param target 目标方法所在对象
+     */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public Object getTwo(Object target) {
         return "getTwo from HotReplace2";
