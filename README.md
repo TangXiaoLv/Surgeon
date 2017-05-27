@@ -5,9 +5,9 @@ English | [中文](https://github.com/TangXiaoLv/Surgeon/blob/master/README-CN.m
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|latest|1.0.0|1.0.0|
+|latest|1.0.1|1.0.0|
 
-Surgeon is a hot method replace framework for Android which was simple to use,flexible,high-performance.
+Surgeon is a hot function replace framework for Android which was simple to use,flexible,high-performance.
 
 Integration
 ---
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.0'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.1'
     }
 }
 
@@ -39,21 +39,24 @@ dependencies {
 
 Getting Started
 ---
-**1.Add annotation on target method**
+**1.Add annotation on target function**
 ```java
-@ReplaceAble
-private String getTwo() {
-    return "TWO";
+package com.tangxiaolv.sdk;
+public class SDKActivity extends AppCompatActivity {
+    @ReplaceAble
+    private String getTwo() {
+        return "TWO";
+    }
 }
 ```
 
-**2.Add annotation on replace method**
+**2.Add annotation on replace function**
 ```java
 //Create ISurgeon subclass.
 public class HotReplace implements ISurgeon {
     /**
      * ref = target(packageName + className + methodName)
-     * @param target Defualt passed,The target method owner object,If target method is static then it equal null.
+     * @param target Defualt passed,The target function owner object,If target function is static then it equal null.
      */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public String getTwo(Object target) {
@@ -64,67 +67,84 @@ public class HotReplace implements ISurgeon {
 
 Advance
 ---
-**Target method**
+**Target function**
 ```java
-@ReplaceAble
-private String getTwo() {
-    return "TWO";
-}
-
-@ReplaceAble(extra = "text")
-private String getTwo(String text) {
-    return text;
+package com.tangxiaolv.sdk;
+public class SDKActivity extends AppCompatActivity {
+    @ReplaceAble
+    private String getTwo() {
+        return "TWO";
+    }
+    
+    @ReplaceAble(extra = "text")
+    private String getTwo(String text) {
+        return text;
+    }
+    
+    @ReplaceAble(extra = "text")
+    private String getThree(String text) {
+        return "getThree_"+text;
+    }
 }
 ```
 
 **1.Static Replace**
 ```java
 public class HotReplace implements ISurgeon {
-    //called before target method call
+    //called before target function call
     @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoBefore(Object target) {
     }
     
-    //replace target method
+    //replace target function
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
-    public String getTwo(Object target) {
+    public String getTwo(TargetHandle handle) {
         return "getTwo from remote";
     }
     
-    //replace target override method
+    //replace target override function
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
-    public String getTwo(Object target,String text/**target method params*/) {
+    public String getTwo(TargetHandle handle,String text/**origin params*/) {
         return "getTwo from remote";
     }
     
-    //called after target method call
+    //called after target function call
     @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoAfter(Object target) {
+    }
+    
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree", extra = "text")
+    public String getThree(TargetHandle handle, String text) throws Throwable {
+        String newText = text + "_hack!";
+        //invoke origin method with new params
+        return (String) handle.proceed(newText);
     }
 }
 ```
 
 **1.Runtime Replace**
 ```java
-//replace return value for target method
+//replace return value for target function
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
 
-//replace return value for target override method 
+//replace return value for target override function 
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo.text", "Runtime result");
 
-//replace target method
+//replace target function
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>(){
+    //params[0] = function owner's object,The other is origin params 
     @Override
     public void before(Object[] params) {
         super.before(params);
     }
 
-    //params[0] = target,the other is target params 
+    //params[0] = TargetHandle,The other is origin params
     @Override
     public String replace(Object[] params) {
         return super.replace(params);
     }
 
+    //params[0] = function owner's object,The other is origin params
     @Override
     public void after(Object[] params) {
         super.after(params);

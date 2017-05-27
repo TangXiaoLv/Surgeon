@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.util.HashMap;
+
 import static com.surgeon.weaving.core.ASPConstant.AFTER;
 import static com.surgeon.weaving.core.ASPConstant.BEFORE;
 import static com.surgeon.weaving.core.ASPConstant.EMPTY;
@@ -45,7 +47,8 @@ public class ReplaceAbleAspect {
         //invoke before method
         MasterFinder.getInstance().findAndInvoke(namespace, BEFORE, fullName, jPoint.getThis(), jPoint.getArgs());
         //invoke method
-        Object result = MasterFinder.getInstance().findAndInvoke(namespace, EMPTY, fullName, jPoint.getThis(), jPoint.getArgs());
+        Object result = MasterFinder.getInstance().findAndInvoke(namespace, EMPTY, fullName,
+                new TargetHandle(jPoint), jPoint.getArgs());
         return result != Continue.class ? result : jPoint.proceed();
     }
 

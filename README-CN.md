@@ -5,7 +5,7 @@
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|最新版本|1.0.0|1.0.0|
+|最新版本|1.0.1|1.0.0|
 
 Surgeon是Android上一个简单，灵活，高性能的方法热替换框架。
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.0'//version参照上表
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.1'//version参照上表
     }
 }
 
@@ -39,9 +39,12 @@ dependencies {
 ---
 **一：在library/application中目标方法上加上注解**
 ```java
-@ReplaceAble
-private String getTwo() {
-    return "TWO";
+package com.tangxiaolv.sdk;
+public class SDKActivity extends AppCompatActivity {
+    @ReplaceAble
+    private String getTwo() {
+        return "TWO";
+    }
 }
 ```
 
@@ -64,14 +67,22 @@ public class HotReplace implements ISurgeon {
 ---
 **目标方法**
 ```java
-@ReplaceAble
-private String getTwo() {
-    return "TWO";
-}
-
-@ReplaceAble(extra = "text")
-private String getTwo(String text) {
-    return text;
+package com.tangxiaolv.sdk;
+public class SDKActivity extends AppCompatActivity {
+    @ReplaceAble
+    private String getTwo() {
+        return "TWO";
+    }
+    
+    @ReplaceAble(extra = "text")
+    private String getTwo(String text) {
+        return text;
+    }
+    
+    @ReplaceAble(extra = "text")
+    private String getThree(String text) {
+        return "getThree_"+text;
+    }
 }
 ```
 
@@ -85,19 +96,26 @@ public class HotReplace implements ISurgeon {
     
     //替换目标方法
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
-    public String getTwo(Object target) {
+    public String getTwo(TargetHandle handle) {
         return "getTwo from remote";
     }
     
     //目标重载方法替换
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
-    public String getTwo(Object target,String text/**目标方法参数*/) {
+    public String getTwo(TargetHandle handle,String text/**目标方法参数*/) {
         return "getTwo from remote";
     }
     
     //目标方法调用之后调用
     @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoAfter(Object target) {
+    }
+    
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree", extra = "text")
+    public String getThree(TargetHandle handle, String text) throws Throwable {
+        String newText = text + "_hack!";
+        //使用新参数调用原始方法
+        return (String) handle.proceed(newText);
     }
 }
 ```
@@ -112,17 +130,19 @@ Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo.text", "Runtime result");
 
 //替换目标方法
 Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>(){
+    //params[0] = 目标方法所在对象,其他是目标方法参数
     @Override
     public void before(Object[] params) {
         super.before(params);
     }
 
-    //params[0] = target,其他是目标方法参数
+    //params[0] = TargetHandle,其他是目标方法参数
     @Override
     public String replace(Object[] params) {
         return super.replace(params);
     }
 
+    //params[0] = 目标方法所在对象,其他是目标方法参数
     @Override
     public void after(Object[] params) {
         super.after(params);

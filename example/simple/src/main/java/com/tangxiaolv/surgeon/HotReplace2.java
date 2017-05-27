@@ -1,39 +1,73 @@
 package com.tangxiaolv.surgeon;
 
+import android.util.Log;
+
 import com.surgeon.weaving.annotations.Replace;
 import com.surgeon.weaving.annotations.ReplaceAfter;
 import com.surgeon.weaving.annotations.ReplaceBefore;
+import com.surgeon.weaving.core.TargetHandle;
 import com.surgeon.weaving.core.interfaces.ISurgeon;
+
+import static android.content.ContentValues.TAG;
 
 public class HotReplace2 implements ISurgeon {
 
+    private final static String TAG = "HotReplace2";
+
+    /**
+     * Called before target function call
+     *
+     * @param target The function owner's object.
+     */
     @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoBefore(Object target) {
-        System.out.println();
+        Log.d(TAG, "getTwoBefore");
     }
 
     /**
-     * ref为目标方法的packageName+className+methodName
+     * Replace target function
      *
-     * @param target 目标方法所在对象
+     * @param handle The function owner's object.
+     * @return new result
      */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
-    public Object getTwo(Object target) {
+    public String getTwo(TargetHandle handle) {
         return "getTwo from HotReplace2";
     }
 
+    /**
+     * Replace target override function
+     *
+     * @param handle {@link TargetHandle}
+     * @param text   origin params
+     * @return new result
+     */
+    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo", extra = "text")
+    public String getTwo(TargetHandle handle, String text/**origin params*/) {
+        return "getTwo from remote";
+    }
+
+    /**
+     * Replace target override function
+     *
+     * @param target The function owner's object.
+     */
     @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
     public void getTwoAfter(Object target) {
-        System.out.println();
+        Log.d(TAG, "getTwoAfter");
     }
 
+    /**
+     * Replace target override function
+     *
+     * @param handle {@link TargetHandle}
+     * @param text   origin params
+     * @return new result
+     */
     @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree", extra = "text")
-    public Object getThree(Object target, String text) {
-        return "getThree from HotReplace2 text=" + text;
-    }
-
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree")
-    public Object getThree(Object target) {
-        return "getThree from HotReplace2";
+    public String getThree(TargetHandle handle, String text) throws Throwable {
+        String newText = text + "_hack!";
+        //invoke origin method with new params
+        return (String) handle.proceed(newText);
     }
 }

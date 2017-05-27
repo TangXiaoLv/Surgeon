@@ -1,19 +1,13 @@
 package com.tangxiaolv.sdk;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.surgeon.weaving.annotations.ReplaceAble;
 import com.surgeon.weaving.core.Surgeon;
-import com.surgeon.weaving.core.interfaces.Replacer;
 import com.surgeon.weaving.core.interfaces.ReplacerImpl;
-
-import static android.support.v7.widget.AppCompatDrawableManager.get;
 
 @SuppressWarnings("all")
 public class SDKActivity extends AppCompatActivity {
@@ -27,25 +21,28 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void addRuntimeResult(View view) {
+        //replace return value for target function
         Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", "Runtime result");
     }
 
     public void addRuntimeMethod(View view) {
         Surgeon.replace("com.tangxiaolv.sdk.SDKActivity.getTwo", new ReplacerImpl<String>() {
+            //params[0] = function owner's object,The other is origin params
             @Override
             public void before(Object[] params) {
-                System.out.println();
+                super.before(params);
             }
 
+            //params[0] = TargetHandle,The other is origin params
             @Override
             public String replace(Object[] params) {
-                Toast.makeText(SDKActivity.this, "Runtime Replace", Toast.LENGTH_SHORT).show();
-                return "Runtime method";
+                return super.replace(params);
             }
 
+            //params[0] = function owner's object,The other is origin params
             @Override
             public void after(Object[] params) {
-                System.out.println();
+                super.after(params);
             }
         });
     }
@@ -61,7 +58,7 @@ public class SDKActivity extends AppCompatActivity {
     }
 
     public void threeClick(View view) {
-        content.setText(StringUtils.getThree());
+        content.setText(getThree("Text"));
     }
 
     @ReplaceAble
@@ -81,6 +78,6 @@ public class SDKActivity extends AppCompatActivity {
 
     @ReplaceAble(extra = "text")
     private String getThree(String text) {
-        return text;
+        return "getThree_" + text;
     }
 }

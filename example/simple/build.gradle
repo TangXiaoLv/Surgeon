@@ -29,5 +29,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project(':example:sdk')
+    //compile project(':surgeon-core')
     annotationProcessor project(':surgeon-compile')
 }
