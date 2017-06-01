@@ -76,11 +76,7 @@ Advance
 ```java
 package com.tangxiaolv.sdk;
 public class SDKActivity extends AppCompatActivity {
-    @Override
-    public boolean singleton() {
-        return false;
-    }
-    
+
     @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private String getTwo() {
         return "TWO";
