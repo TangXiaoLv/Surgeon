@@ -81,6 +81,7 @@ public class SDKActivity extends AppCompatActivity {
     private String getTwo() {
         return "TWO";
     }
+    
     @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
     private String getTwo(String text) {
         return text;
