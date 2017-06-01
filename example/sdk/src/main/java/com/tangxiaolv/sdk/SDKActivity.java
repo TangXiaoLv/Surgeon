@@ -47,7 +47,7 @@ public class SDKActivity extends AppCompatActivity {
         });
     }
 
-    @ReplaceAble
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "oneClick")
     public void oneClick(View view) {
         content.setText(getOne());
     }
@@ -61,22 +61,22 @@ public class SDKActivity extends AppCompatActivity {
         content.setText(getThree("Text"));
     }
 
-    @ReplaceAble
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getOne")
     private String getOne() {
         return "ONE";
     }
 
-    @ReplaceAble
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private final static String getTwo() {
         return "TWO";
     }
 
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
     private String getTwo(String text) {
         return text;
     }
 
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getThree.text")
     private String getThree(String text) {
         return "getThree_" + text;
     }

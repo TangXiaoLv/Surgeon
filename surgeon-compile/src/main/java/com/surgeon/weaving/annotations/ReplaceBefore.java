@@ -7,18 +7,18 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.CLASS;
 
 /**
- * Called before target method called.
+ * Called before target function called.
  */
 @Retention(CLASS)
 @Target({METHOD})
 public @interface ReplaceBefore {
     /**
-     * The target method reference
+     * The namespace of target function.
      */
-    String ref();
+    String namespace();
 
     /**
-     * Extra mark,Usually used in override.
+     * Function name
      */
-    String extra() default "";
+    String function();
 }

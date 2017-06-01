@@ -1,6 +1,5 @@
 package com.surgeon.weaving.core;
 
-import com.surgeon.weaving.annotations.ReplaceAble;
 import com.surgeon.weaving.core.exceptions.SurgeonException;
 import com.surgeon.weaving.core.interfaces.Continue;
 import com.surgeon.weaving.core.interfaces.IMaster;
@@ -14,7 +13,7 @@ import static com.surgeon.weaving.core.ASPConstant.AFTER;
 import static com.surgeon.weaving.core.ASPConstant.BEFORE;
 
 /**
- * The master {@link ReplaceAbleAspect},Used for find replace method.
+ * The master {@link ReplaceAbleAspect},Used for find replace function.
  */
 class MasterFinder {
 
@@ -32,22 +31,22 @@ class MasterFinder {
     }
 
     /**
-     * Create {@link IMaster} and find replace method.
+     * Create {@link IMaster} and find replace function.
      *
-     * @param namespace The key of master.eg:PackageName + ClassName
+     * @param namespace The namespace of function
      * @param prefix    {@link ASPConstant#BEFORE},{@link ASPConstant#EMPTY}, {@link
      *                  ASPConstant#AFTER}
-     * @param fullName  The key of method.eg:MethodName + {@link ReplaceAble#extra()}
-     * @param target    original instance
+     * @param function  The name of function.
+     * @param target    Original instance or {@link TargetHandle}
      * @param args      Input params
      * @return new result
      */
     Object findAndInvoke(String namespace,
                          String prefix,
-                         String fullName,
+                         String function,
                          Object target,
                          Object[] args) throws SurgeonException {
-        if (isEmpty(namespace) || isEmpty(fullName)) return Continue.class;
+        if (isEmpty(namespace) || isEmpty(function)) return Continue.class;
         try {
             String masterPath = PREFIX + namespace.replace(".", "_");
             IMaster master = InnerCache.getInstance().getMaster(masterPath);
@@ -64,7 +63,7 @@ class MasterFinder {
 
             //runtime repalce
             Object wrapper;
-            String runtimeKey = namespace + "." + fullName;
+            String runtimeKey = namespace + "." + function;
             if (AFTER.equals(prefix)) {
                 wrapper = InnerCache.getInstance().popReplaceWapper(runtimeKey);
             } else {
@@ -87,9 +86,9 @@ class MasterFinder {
             }
 
             //static repalce
-            SurgeonMethod newMethod = master.find(prefix + fullName);
-            if (newMethod != null) {
-                return invoke(newMethod, copyOfArgs);
+            SurgeonMethod replaceMethod = master.find(prefix + function);
+            if (replaceMethod != null) {
+                return invoke(replaceMethod, copyOfArgs);
             }
         } catch (ClassNotFoundException ignored) {
             //ignored
@@ -108,13 +107,13 @@ class MasterFinder {
         if (ownerInstance == null) {
             Class clazz = method.getOwner();
             ownerInstance = clazz.newInstance();
-            InnerCache.getInstance().putMethodOwner(method.getOwner(), ownerInstance);
+            if (ownerInstance instanceof ISurgeon && ((ISurgeon) ownerInstance).singleton()) {
+                InnerCache.getInstance().putMethodOwner(method.getOwner(), ownerInstance);
+            }
         }
-
         if (ownerInstance instanceof ISurgeon) {
             return method.getNewMethod().invoke(ownerInstance, args);
         }
-
         return Continue.class;
     }
 }

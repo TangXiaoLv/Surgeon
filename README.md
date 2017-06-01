@@ -5,7 +5,7 @@ English | [中文](https://github.com/TangXiaoLv/Surgeon/blob/master/README-CN.m
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|latest|1.0.1|1.0.0|
+|latest|1.0.2|1.0.1|
 
 Surgeon is a hot function replace framework for Android which was simple to use,flexible,high-performance.
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.1'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.2'
     }
 }
 
@@ -33,7 +33,7 @@ apply plugin: 'com.tangxiaolv.surgeon'
 
 //add annotationProcessor
 dependencies {
-    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.0'
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.1'
 }
 ```
 
@@ -43,7 +43,10 @@ Getting Started
 ```java
 package com.tangxiaolv.sdk;
 public class SDKActivity extends AppCompatActivity {
-    @ReplaceAble
+    //namespace usually is packageName + className,Also can define any string if you want. 
+    //function function name,usually is current function name,Also can define any string if you want. 
+    //namespace + function must unique
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private String getTwo() {
         return "TWO";
     }
@@ -54,12 +57,14 @@ public class SDKActivity extends AppCompatActivity {
 ```java
 //Create ISurgeon subclass.
 public class HotReplace implements ISurgeon {
-    /**
-     * ref = target(packageName + className + methodName)
-     * @param target Defualt passed,The target function owner object,If target function is static then it equal null.
-     */
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
-    public String getTwo(Object target) {
+
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+    
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
+    public String getTwo(TargetHandle handle) {
         return "getTwo from HotReplace2";
     }
 }
@@ -71,17 +76,21 @@ Advance
 ```java
 package com.tangxiaolv.sdk;
 public class SDKActivity extends AppCompatActivity {
-    @ReplaceAble
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+    
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private String getTwo() {
         return "TWO";
     }
-    
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
     private String getTwo(String text) {
         return text;
     }
     
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getThree")
     private String getThree(String text) {
         return "getThree_"+text;
     }
@@ -91,29 +100,39 @@ public class SDKActivity extends AppCompatActivity {
 **1.Static Replace**
 ```java
 public class HotReplace implements ISurgeon {
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+
     //called before target function call
-    @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //target : target function owner object
+    @ReplaceBefore(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public void getTwoBefore(Object target) {
     }
     
     //replace target function
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //handle :You can invoke target function or get target function owner by handler.
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public String getTwo(TargetHandle handle) {
         return "getTwo from remote";
     }
     
     //replace target override function
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
-    public String getTwo(TargetHandle handle,String text/**origin params*/) {
+    //handle :You can invoke target function or get target function owner by handler.
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
+    public String getTwo(TargetHandle handle,String text/**目标方法参数*/) {
         return "getTwo from remote";
     }
     
     //called after target function call
-    @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //target : target function owner object
+    @ReplaceAfter(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public void getTwoAfter(Object target) {
     }
     
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree", extra = "text")
+    //replace target function
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getThree")
     public String getThree(TargetHandle handle, String text) throws Throwable {
         String newText = text + "_hack!";
         //invoke origin method with new params

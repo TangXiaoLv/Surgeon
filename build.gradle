@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.1'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.2'
 
         //jcenter push plugin
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'

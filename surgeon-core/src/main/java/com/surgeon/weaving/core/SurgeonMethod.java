@@ -4,7 +4,7 @@ package com.surgeon.weaving.core;
 import java.lang.reflect.Method;
 
 /**
- * The replace method wrapper.
+ * The replace function wrapper.
  */
 public class SurgeonMethod {
     private Class owner;

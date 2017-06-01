@@ -120,7 +120,7 @@ public class SurgeonProcessor extends AbstractProcessor {
                 continue;
             }
             Replace replace = e.getAnnotation(Replace.class);
-            parseReplace(e, group, "", replace.ref(), replace.extra());
+            parseReplace(e, group, "", replace.namespace(), replace.function());
         }
 
         // Process each @ReplaceBefore element.
@@ -129,7 +129,7 @@ public class SurgeonProcessor extends AbstractProcessor {
                 continue;
             }
             ReplaceBefore replace = e.getAnnotation(ReplaceBefore.class);
-            parseReplace(e, group, "before_", replace.ref(), replace.extra());
+            parseReplace(e, group, "before_", replace.namespace(), replace.function());
         }
 
         // Process each @ReplaceAfter element.
@@ -138,7 +138,7 @@ public class SurgeonProcessor extends AbstractProcessor {
                 continue;
             }
             ReplaceAfter replace = e.getAnnotation(ReplaceAfter.class);
-            parseReplace(e, group, "after_", replace.ref(), replace.extra());
+            parseReplace(e, group, "after_", replace.namespace(), replace.function());
         }
 
         generateMasterJavaFile(group, javaFiles);
@@ -149,18 +149,18 @@ public class SurgeonProcessor extends AbstractProcessor {
             Element e,
             Map<String, Map<String, Element>> group,
             String prefix,
-            String ref,
-            String extra) {
-        int lastPointIndex = ref.lastIndexOf(".");
-        String namespace = ref.substring(0, lastPointIndex);
-        String methodName = ref.substring(lastPointIndex + 1, ref.length());
-        String fullName = prefix + methodName + (extra.length() == 0 ? "" : "." + extra);
+            String namespace,
+            String function) {
+        if (isEmpty(namespace) || isEmpty(function)) {
+            error("namespace=%s or function=%s can't be empty.", namespace, function);
+        }
 
+        String fullName = prefix + function;
         Map<String, Element> collect;
         if (group.containsKey(namespace)) {
             collect = group.get(namespace);
             if (collect.containsKey(fullName)) {
-                error("duplicate define %s.%s", ref, extra);
+                error("duplicate define %s.%s", namespace, function);
             }
         } else {
             collect = new HashMap<>();

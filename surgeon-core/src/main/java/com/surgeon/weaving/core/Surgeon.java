@@ -5,9 +5,9 @@ import com.surgeon.weaving.core.interfaces.Replacer;
 public class Surgeon {
 
     /**
-     * Runtime to replace original method's result.
+     * Runtime to replace original function's result.
      *
-     * @param ref    The original method reference.
+     * @param ref    namespace + "." + function
      * @param result New result.
      */
     public static void replace(String ref, Object result) {
@@ -15,10 +15,10 @@ public class Surgeon {
     }
 
     /**
-     * Runtime to replace original method.
+     * Runtime to replace original function.
      *
-     * @param ref      The original method reference.
-     * @param replacer New method.
+     * @param ref      namespace + "." + function
+     * @param replacer new function.
      */
     public static void replace(String ref, Replacer replacer) {
         InnerCache.getInstance().addReplaceWapper(ref, new ReplaceWapper(replacer, replacer != null));

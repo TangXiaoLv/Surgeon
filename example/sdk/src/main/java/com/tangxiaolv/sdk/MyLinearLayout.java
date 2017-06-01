@@ -2,10 +2,10 @@ package com.tangxiaolv.sdk;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.text.Layout;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.LinearLayout;
+
+import com.surgeon.weaving.annotations.ReplaceAble;
 
 public class MyLinearLayout extends LinearLayout {
     public MyLinearLayout(Context context) {
@@ -20,6 +20,7 @@ public class MyLinearLayout extends LinearLayout {
         super(context, attrs, defStyleAttr);
     }
 
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.MyLinearLayout", function = "onMeasure")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

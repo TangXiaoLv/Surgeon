@@ -4,7 +4,7 @@ import com.surgeon.weaving.annotations.ReplaceAble;
 
 public class StringUtils {
 
-    @ReplaceAble
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.StringUtils", function = "getThree")
     public static String getThree() {
         return "THREE";
     }

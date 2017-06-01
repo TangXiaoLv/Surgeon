@@ -5,7 +5,7 @@
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|最新版本|1.0.1|1.0.0|
+|最新版本|1.0.2|1.0.1|
 
 Surgeon是Android上一个简单，灵活，高性能的方法热替换框架。
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.1'//version参照上表
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.2'//version参照上表
     }
 }
 
@@ -31,7 +31,7 @@ apply plugin: 'com.tangxiaolv.surgeon'
 
 //添加注解解析器
 dependencies {
-    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.0'//version参照上表
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.1'//version参照上表
 }
 ```
 
@@ -41,7 +41,10 @@ dependencies {
 ```java
 package com.tangxiaolv.sdk;
 public class SDKActivity extends AppCompatActivity {
-    @ReplaceAble
+    //namespace 命名空间,通常为packageName + className,也可以自定义
+    //function 方法名称,通常为当前的方法名字，也可自定义
+    //namespace + function必须唯一,否则无法正确被替换
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private String getTwo() {
         return "TWO";
     }
@@ -52,12 +55,15 @@ public class SDKActivity extends AppCompatActivity {
 ```java
 //创建新类实现ISurgeon
 public class HotReplace implements ISurgeon {
-    /**
-     * ref为目标方法的packageName+className+methodName
-     * @param target 默认传递:目标方法所在对象,如果目标方法为静态,target为null
-     */
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
-    public String getTwo(Object target) {
+
+    //当前类是否为单例
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
+    public String getTwo(TargetHandle handle) {
         return "getTwo from HotReplace2";
     }
 }
@@ -69,17 +75,22 @@ public class HotReplace implements ISurgeon {
 ```java
 package com.tangxiaolv.sdk;
 public class SDKActivity extends AppCompatActivity {
-    @ReplaceAble
+
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+    
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     private String getTwo() {
         return "TWO";
     }
-    
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
     private String getTwo(String text) {
         return text;
     }
     
-    @ReplaceAble(extra = "text")
+    @ReplaceAble(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getThree")
     private String getThree(String text) {
         return "getThree_"+text;
     }
@@ -89,29 +100,40 @@ public class SDKActivity extends AppCompatActivity {
 **一：静态替换**
 ```java
 public class HotReplace implements ISurgeon {
+
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+
     //调用目标方法前调用
-    @ReplaceBefore(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //target 目标方法所在对象
+    @ReplaceBefore(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public void getTwoBefore(Object target) {
     }
     
     //替换目标方法
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //handle 目标方法的处理类，可通过它调用目标方法和获取目标方法所在对象
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public String getTwo(TargetHandle handle) {
         return "getTwo from remote";
     }
     
     //目标重载方法替换
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo",extra = "text")
+    //handle 目标方法的处理类，可通过它调用目标方法和获取目标方法所在对象
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
     public String getTwo(TargetHandle handle,String text/**目标方法参数*/) {
         return "getTwo from remote";
     }
     
     //目标方法调用之后调用
-    @ReplaceAfter(ref = "com.tangxiaolv.sdk.SDKActivity.getTwo")
+    //target 目标方法所在对象
+    @ReplaceAfter(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo")
     public void getTwoAfter(Object target) {
     }
     
-    @Replace(ref = "com.tangxiaolv.sdk.SDKActivity.getThree", extra = "text")
+    //替换目标方法
+    @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getThree")
     public String getThree(TargetHandle handle, String text) throws Throwable {
         String newText = text + "_hack!";
         //使用新参数调用原始方法

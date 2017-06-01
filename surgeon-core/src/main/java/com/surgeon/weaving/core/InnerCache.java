@@ -11,7 +11,7 @@ import java.util.Map;
 class InnerCache {
 
     private final LruCache<String, IMaster> masterCache = new LruCache<>(20);
-    private final LruCache<Class, Object> ownerCache = new LruCache<>(20);
+    private final Map<Class, Object> ownerCache = new HashMap<>();
     private final Map<String, ReplaceWapper> replaceWapperCache = new HashMap<>();
 
     private static class Lazy {

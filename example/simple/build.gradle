@@ -29,6 +29,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project(':example:sdk')
+    annotationProcessor 'com.tangxiaolv.surgeon:surgeon-compile:1.0.1'
+    //annotationProcessor project(':surgeon-compile')
     //compile project(':surgeon-core')
-    annotationProcessor project(':surgeon-compile')
 }
