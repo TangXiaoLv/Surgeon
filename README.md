@@ -121,7 +121,7 @@ public class HotReplace implements ISurgeon {
     //replace target override function
     //handle :You can invoke target function or get target function owner by handler.
     @Replace(namespace = "com.tangxiaolv.sdk.SDKActivity", function = "getTwo.text")
-    public String getTwo(TargetHandle handle,String text/**目标方法参数*/) {
+    public String getTwo(TargetHandle handle,String text/**target params*/) {
         return "getTwo from remote";
     }
     
