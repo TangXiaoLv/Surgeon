@@ -45,7 +45,7 @@ class MasterFinder {
                          String prefix,
                          String function,
                          Object target,
-                         Object[] args) throws SurgeonException {
+                         Object[] args) throws Throwable {
         if (isEmpty(namespace) || isEmpty(function)) return Continue.class;
         try {
             String masterPath = PREFIX + namespace.replace(".", "_");

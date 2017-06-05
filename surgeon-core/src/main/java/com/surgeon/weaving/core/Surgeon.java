@@ -23,4 +23,13 @@ public class Surgeon {
     public static void replace(String ref, Replacer replacer) {
         InnerCache.getInstance().addReplaceWapper(ref, new ReplaceWapper(replacer, replacer != null));
     }
+
+    /**
+     * Remove replaced result/function.
+     *
+     * @param ref namespace + "." + function
+     */
+    public static void remove(String ref) {
+        InnerCache.getInstance().popReplaceWapper(ref);
+    }
 }

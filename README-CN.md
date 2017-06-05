@@ -5,7 +5,7 @@
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|最新版本|1.0.2|1.0.1|
+|最新版本|1.0.3|1.0.1|
 
 Surgeon是Android上一个简单，灵活，高性能的方法热替换框架。
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.2'//version参照上表
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.3'//version参照上表
     }
 }
 

@@ -27,7 +27,7 @@ class SurgeonPlugin implements Plugin<Project> {
 
     project.dependencies {
       compile 'org.aspectj:aspectjrt:1.8.10'
-      compile 'com.tangxiaolv.surgeon:surgeon-core:1.0.2'
+      compile 'com.tangxiaolv.surgeon:surgeon-core:1.0.3'
     }
 
     project.extensions.create('surgeon', SurgeonExtension)

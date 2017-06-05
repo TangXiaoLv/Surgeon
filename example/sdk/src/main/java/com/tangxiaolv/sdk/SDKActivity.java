@@ -35,7 +35,7 @@ public class SDKActivity extends AppCompatActivity {
 
             //params[0] = TargetHandle,The other is origin params
             @Override
-            public String replace(Object[] params) {
+            public String replace(Object[] params) throws Throwable {
                 return super.replace(params);
             }
 
