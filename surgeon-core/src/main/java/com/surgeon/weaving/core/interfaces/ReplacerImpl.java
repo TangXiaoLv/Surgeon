@@ -1,5 +1,7 @@
 package com.surgeon.weaving.core.interfaces;
 
+import com.surgeon.weaving.core.TargetHandle;
+
 /**
  * The implements of {@link Replacer}
  *
@@ -12,9 +14,12 @@ public class ReplacerImpl<T> implements Replacer<T> {
         //nothing
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public T replace(Object[] params) {
-        return null;
+    public T replace(Object[] params) throws Throwable {
+        Object[] copy = new Object[params.length - 1];
+        System.arraycopy(params, 1, copy, 0, params.length - 1);
+        return (T) ((TargetHandle) params[0]).proceed(copy);
     }
 
     @Override

@@ -5,7 +5,7 @@ English | [中文](https://github.com/TangXiaoLv/Surgeon/blob/master/README-CN.m
 
 |Lib|surgeon-plugin|surgeon-compile|
 |:---:|:---|:---|
-|latest|1.0.2|1.0.1|
+|latest|1.0.3|1.0.1|
 
 Surgeon is a hot function replace framework for Android which was simple to use,flexible,high-performance.
 
@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.2'
+        classpath 'com.tangxiaolv.surgeon:surgeon-plugin:1.0.3'
     }
 }
 

@@ -19,7 +19,7 @@ public interface Replacer<T> {
      * @param params The original function input params.
      * @return new return result.
      */
-    T replace(Object[] params);
+    T replace(Object[] params) throws Throwable;
 
     /**
      * Called after original function called.
